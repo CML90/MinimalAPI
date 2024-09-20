@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestAPI.Models;
 namespace RestAPI.Models;
 
-/// <summary
+/// <summary>
 /// This class inehrits from DbContext, allowing us to connect to the database.
 /// </summary>
 public class TodoContext : DbContext

@@ -6,8 +6,6 @@ using System.Runtime.CompilerServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//remove for EF because we are replacing InMemoryTaskService
-//builder.Services.AddSingleton<ITaskService>(new InMemoryTaskService());
 builder.Services.AddDbContext<TodoContext>(opt =>
     opt.UseInMemoryDatabase("TodoList"));
 
@@ -21,11 +19,7 @@ app.Use(async (context, next) =>
     Console.WriteLine($"[{context.Request.Method}] {context.Request.Path} [{DateTime.UtcNow}] Finished.");
 });
 
-//remove for EF implementation
-//var todos = new List<Todo>();
-
-
-/// <summary
+/// <summary>
 /// This middleware gets all the todo items in the table.
 /// </summary>
 /// <param name="todo">TodoContext is class for DbContext.</param>
@@ -34,7 +28,7 @@ app.Use(async (context, next) =>
 /// </remarks>
 app.MapGet("/todos", async (TodoContext todo) => await todo.ToDos.ToListAsync());
 
-/// <summary
+/// <summary>
 /// This middleware the one specified todo item.
 /// </summary>
 /// <param name="id">Todo item's id</param>
@@ -44,7 +38,7 @@ app.MapGet("/todos/{id}", async (int id, TodoContext todo) =>
             ? Results.Ok(task)
             : Results.NotFound());
 
-/// <summary
+/// <summary>
 /// This middleware adds a given todo item (task) to the database.
 /// </summary>
 /// <param name="task">Individual todo item</param>
@@ -73,7 +67,7 @@ app.MapPost("/todos", async (Todo task, TodoContext todo) =>
     return await next(context);
 });
 
-/// <summary
+/// <summary>
 /// This middleware deletes a specific todo item.
 /// </summary>
 app.MapDelete("/todos/{id}", async (int id, TodoContext todo) => 
@@ -89,40 +83,3 @@ app.MapDelete("/todos/{id}", async (int id, TodoContext todo) =>
 
 
 app.Run();
-
-//moved to Models -> ToDoitem.cs
-// public record Todo(int Id, string Name, DateTime DueDate, bool IsCompleted);
-
-// interface ITaskService
-// {
-//     Todo? GetTodoById(int id);
-//     List<Todo> GetTodos();
-//     void DeleteTodoById(int id);
-//     Todo AddTodo(Todo task);
-// }
-
-//the class that adds etc to the todo list but it isnt needed whe integrating EF - remove
-// class InMemoryTaskService : ITaskService
-// {
-//     private readonly List<Todo> _todos = [];
-//     public Todo AddTodo(Todo task)
-//     {
-//         _todos.Add(task);
-//         return task;
-//     }
-
-//     public void DeleteTodoById(int id)
-//     {
-//         _todos.RemoveAll(task => id == task.Id);
-//     }
-
-//     public Todo? GetTodoById(int id)
-//     {
-//         return _todos.SingleOrDefault(t => id == t.Id);
-//     }
-
-//     public List<Todo> GetTodos()
-//     {
-//         return _todos;
-//     }
-// }
